@@ -5,45 +5,26 @@ import (
 	"net/http"
 	"time"
 
+	"mu.dev"
 	"github.com/hablullah/go-prayer"
 )
 
 var (
 	template = `
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta name="description" content="Islamic prayer times">
-  <title>Islam | Mu</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
-  #content {
-    max-width: 1400px;
-    margin: 0 auto;
-    margin-top: 100px;
-    text-align: center;
-    font-family: Arial;
-    font-size: 2em;
-  }
   #name {
     text-align: right;
-    width: 120px;
+    width: 60px;
     margin-right: 20px;
     display: inline-block;
   }
-  @media only screen and (max-width: 600px) {
-    #content {
-      margin-top: 25px;
-    }
+  #times {
+    padding-top: 100px;
   }
   </style>
-</head>
-<body>
-<div id="content">
-%s
-</div>
-</body>
-</html>
+  <div id="times">
+  %s
+  </div>
 `
 )
 
@@ -83,7 +64,8 @@ func indexHandler(w http.ResponseWriter, r *http.Request) {
 		PreciseToSeconds:    true,
 	}, 2024)
 
-	content := "I bear witness there is no deity but God,<br>and I bear witness that Muhammad is the Messenger of God.<br><br>"
+	head  := "I bear witness there is no deity but God, and I bear witness that Muhammad is the Messenger of God."
+	content := ""
 
 	for _, sched := range londonSchedules {
 		if sched.Date != date {
@@ -91,7 +73,7 @@ func indexHandler(w http.ResponseWriter, r *http.Request) {
 		}
 		content += printSchedule(sched)
 		// schedule for today
-		out := fmt.Sprintf(template, content)
+		out := mu.Template("Pray", "Islamic Prayer Times", head, fmt.Sprintf(template, content))
 		w.Write([]byte(out))
 		return
 	}
