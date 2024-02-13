@@ -5,8 +5,8 @@ import (
 	"net/http"
 	"time"
 
-	"mu.dev"
 	"github.com/hablullah/go-prayer"
+	"mu.dev"
 )
 
 var (
@@ -18,10 +18,19 @@ var (
     margin-right: 20px;
     display: inline-block;
   }
+  #shahada {
+    padding: 100px 20px;
+    text-align: center;
+    max-width: 400px;
+  }
   #times {
-    padding-top: 100px;
+    max-width: 400px;
+    text-align: center;
   }
   </style>
+  <div id="shahada">
+  %s
+  </div>
   <div id="times">
   %s
   </div>
@@ -64,7 +73,7 @@ func indexHandler(w http.ResponseWriter, r *http.Request) {
 		PreciseToSeconds:    true,
 	}, 2024)
 
-	head  := "I bear witness there is no deity but God, and I bear witness that Muhammad is the Messenger of God."
+	head := "<p>I bear witness there is no deity but God, and I bear witness that Muhammad is the Messenger of God.</p>"
 	content := ""
 
 	for _, sched := range londonSchedules {
@@ -73,7 +82,7 @@ func indexHandler(w http.ResponseWriter, r *http.Request) {
 		}
 		content += printSchedule(sched)
 		// schedule for today
-		out := mu.Template("Pray", "Islamic Prayer Times", head, fmt.Sprintf(template, content))
+		out := mu.Template("Pray", "Islamic Prayer Times", "", fmt.Sprintf(template, head, content))
 		w.Write([]byte(out))
 		return
 	}
