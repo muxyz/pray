@@ -14,7 +14,7 @@ var (
   <style>
   #name {
     text-align: right;
-    width: 60px;
+    width: 100px;
     margin-right: 20px;
     display: inline-block;
   }
@@ -26,6 +26,7 @@ var (
   #times {
     max-width: 400px;
     text-align: center;
+    font-size: 2em;
   }
   </style>
   <div id="shahada">
