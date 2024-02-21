@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"net/http"
+	"strings"
 	"time"
 
 	"github.com/hablullah/go-prayer"
@@ -39,8 +40,8 @@ var (
 )
 
 type City struct {
-	Name string
-	Lat,Lon float64
+	Name     string
+	Lat, Lon float64
 	Location string
 }
 
@@ -48,6 +49,7 @@ var cities = []City{
 	City{Name: "London", Lat: 51.41334, Lon: -0.36701, Location: "Europe/London"},
 	City{Name: "Doha", Lat: 25.286106, Lon: 51.534817, Location: "Asia/Qatar"},
 	City{Name: "New York", Lat: 40.730610, Lon: -73.935242, Location: "America/New_York"},
+	City{Name: "Tokyo", Lat: 35.672855, Lon: 139.817413, Location: "Asia/Tokyo"},
 }
 
 func dateFormat(v time.Time) string {
@@ -59,7 +61,7 @@ func printSchedule(city string, sched prayer.Schedule) string {
 		return fmt.Sprintf(`<div><span id="name">%s</span><span id="time">%s</span></div>`, k, dateFormat(v))
 	}
 
-	str := fmt.Sprintf(`<h2 id="%s">%s</h2>`, city, city)
+	str := fmt.Sprintf(`<h2 id="%s">%s</h2>`, strings.ReplaceAll(city, " ", ""), city)
 	str += format("Fajr", sched.Fajr)
 	str += format("🌅", sched.Sunrise)
 	str += format("Zuhr", sched.Zuhr)
@@ -91,8 +93,7 @@ func indexHandler(w http.ResponseWriter, r *http.Request) {
 			PreciseToSeconds:    true,
 		}, 2024)
 
-
-		nav += `<a href="#`+city.Name+`" class="head">`+city.Name+`</a>`
+		nav += fmt.Sprintf(`<a href="#%s" class="head">%s</a>`, strings.ReplaceAll(city.Name, " ", ""), city.Name)
 
 		for _, sched := range schedules {
 			if sched.Date != date {
@@ -103,9 +104,9 @@ func indexHandler(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-		out := mu.Template("Pray", "Islamic Prayer Times", nav, fmt.Sprintf(template, head, content))
-		w.Write([]byte(out))
-		return
+	out := mu.Template("Pray", "Islamic Prayer Times", nav, fmt.Sprintf(template, head, content))
+	w.Write([]byte(out))
+	return
 }
 
 func main() {
