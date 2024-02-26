@@ -22,10 +22,10 @@ var (
   #shahada {
     padding: 50px 20px;
     text-align: center;
-    max-width: 400px;
+    max-width: 600px;
   }
   #times {
-    max-width: 400px;
+    max-width: 600px;
     text-align: center;
     font-size: 2em;
   }
@@ -54,6 +54,15 @@ var cities = []City{
 	City{Name: "Tokyo", Lat: 35.672855, Lon: 139.817413, Location: "Asia/Tokyo"},
 }
 
+var Call = `
+God is the Greatest! God is the Greatest! 
+I bear witness that there is no god but God. 
+I bear witness that Muhammad is the Messenger of God. 
+Come to prayer. Come to success. 
+God is the Greatest! God is the Greatest!
+There is no god but God.
+`
+
 func dateFormat(v time.Time) string {
 	return v.Format(time.Kitchen)
 }
@@ -77,7 +86,7 @@ func printSchedule(city string, sched prayer.Schedule) string {
 func indexHandler(w http.ResponseWriter, r *http.Request) {
 	date := time.Now().Format(time.DateOnly)
 
-	head := "<p>I bear witness there is no deity but God, and I bear witness that Muhammad is the Messenger of God.</p>"
+	head := "<h2>Call To Prayer</h2><p>" + Call + "</p>"
 	nav := ""
 	content := ""
 
