@@ -28,6 +28,7 @@ var (
     max-width: 600px;
     text-align: center;
     font-size: 2em;
+    font-style: italic;
   }
   </style>
   <div id="shahada">
@@ -48,37 +49,30 @@ type City struct {
 var cities = []City{
 	City{Name: "London", Lat: 51.41334, Lon: -0.36701, Location: "Europe/London"},
 	City{Name: "Doha", Lat: 25.286106, Lon: 51.534817, Location: "Asia/Qatar"},
-	City{Name: "Makkah", Lat: 21.422487, Lon: 39.826206, Location: "Asia/Riyadh"},
+	City{Name: "Mecca", Lat: 21.422487, Lon: 39.826206, Location: "Asia/Riyadh"},
 	City{Name: "New York", Lat: 40.730610, Lon: -73.935242, Location: "America/New_York"},
 	City{Name: "Sydney", Lat: -33.865143, Lon: 151.209900, Location: "Australia/Sydney"},
 	City{Name: "Tokyo", Lat: 35.672855, Lon: 139.817413, Location: "Asia/Tokyo"},
 }
 
-var Call = `
-God is the Greatest! God is the Greatest! 
-I bear witness that there is no god but God. 
-I bear witness that Muhammad is the Messenger of God. 
-Come to prayer. Come to success. 
-God is the Greatest! God is the Greatest!
-There is no god but God.
-`
-
 func dateFormat(v time.Time) string {
-	return v.Format(time.Kitchen)
+	//return v.Format(time.Kitchen)
+	return v.Format("15:04")
 }
 
-func printSchedule(city string, sched prayer.Schedule) string {
-	format := func(k string, v time.Time) string {
-		return fmt.Sprintf(`<div><span id="name">%s</span><span id="time">%s</span></div>`, k, dateFormat(v))
+func printSchedule(city string, t1, t2 prayer.Schedule) string {
+	format := func(k string, v, x time.Time) string {
+		return fmt.Sprintf(`<div><span id="name">%s</span><span id="time">%s / %s</span></div>`, k, dateFormat(v), dateFormat(x))
 	}
 
 	str := fmt.Sprintf(`<h2 id="%s">%s</h2>`, strings.ReplaceAll(city, " ", ""), city)
-	str += format("Fajr", sched.Fajr)
-	str += format("🌅", sched.Sunrise)
-	str += format("Zuhr", sched.Zuhr)
-	str += format("Asr", sched.Asr)
-	str += format("Maghrib", sched.Maghrib)
-	str += format("Isha", sched.Isha)
+	str += fmt.Sprintf(`<div style="font-size: 0.5em; margin-bottom: 20px;"><span id="name">%s</span><span id="time">%s / %s</span></div>`, "SALAH", "TODAY", "TOMORROW")
+	str += format("Fajr", t1.Fajr, t2.Fajr)
+	str += format("🌅", t1.Sunrise, t2.Sunrise)
+	str += format("Zuhr", t1.Zuhr, t2.Zuhr)
+	str += format("Asr", t1.Asr, t2.Asr)
+	str += format("Maghrib", t1.Maghrib, t2.Maghrib)
+	str += format("Isha", t1.Isha, t2.Isha)
 	str += "<br><br>"
 	return str
 }
@@ -86,7 +80,7 @@ func printSchedule(city string, sched prayer.Schedule) string {
 func indexHandler(w http.ResponseWriter, r *http.Request) {
 	date := time.Now().Format(time.DateOnly)
 
-	head := "<h2>Call To Prayer</h2><p>" + Call + "</p>"
+	head := ""
 	nav := ""
 	content := ""
 
@@ -106,12 +100,12 @@ func indexHandler(w http.ResponseWriter, r *http.Request) {
 
 		nav += fmt.Sprintf(`<a href="#%s" class="head">%s</a>`, strings.ReplaceAll(city.Name, " ", ""), city.Name)
 
-		for _, sched := range schedules {
+		for i, sched := range schedules {
 			if sched.Date != date {
 				continue
 			}
 
-			content += printSchedule(city.Name, sched)
+			content += printSchedule(city.Name, schedules[i], schedules[i+1])
 		}
 	}
 
