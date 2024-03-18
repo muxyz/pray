@@ -68,7 +68,7 @@ func printSchedule(city string, t1, t2 prayer.Schedule) string {
 	str := fmt.Sprintf(`<h2 id="%s">%s</h2>`, strings.ReplaceAll(city, " ", ""), city)
 	str += fmt.Sprintf(`<div style="font-size: 0.5em; margin-bottom: 20px;"><span id="name">%s</span><span id="time">%s / %s</span></div>`, "SALAH", "TODAY", "TOMORROW")
 	str += format("Fajr", t1.Fajr, t2.Fajr)
-	str += format("🌅", t1.Sunrise, t2.Sunrise)
+	str += format(`<span style="font-style: normal">🌅</span>`, t1.Sunrise, t2.Sunrise)
 	str += format("Zuhr", t1.Zuhr, t2.Zuhr)
 	str += format("Asr", t1.Asr, t2.Asr)
 	str += format("Maghrib", t1.Maghrib, t2.Maghrib)
